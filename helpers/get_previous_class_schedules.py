@@ -53,8 +53,10 @@ def process_subject_data(term, level, subject, soup):
     # otherwise, get iterator for children of main table
     mainClassTableChildren = mainClassTable.findChildren("tr", recursive=False)
 
+    # course contains a list of classes
     course = {}
-    courses = []
+    # classesList is a list of classes (for a particular course)
+    classesList = []
 
     for child in mainClassTableChildren:
     
@@ -62,18 +64,17 @@ def process_subject_data(term, level, subject, soup):
 
         # if tr is a header row, add course to classes and reinitialize the course object
         if children[0].name == 'th':
-            # add last updated time to course
-            course['dateUpdated'] = datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d %H:%M:%S")
-
             # add course to course list if course is not empty
             if course.get('subjectCode', None) != None:
-                courses += [course]
+                classesList.extend(classes)
 
             # reinitialize course
             course = {
                 'term': term,
                 'level': 'UG' if level == "under" else 'G' 
             }
+            # add last updated time to course
+            course['dateUpdated'] = datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d %H:%M:%S")
 
         # if tr is a course data row, add details to the course object
         elif children[0].name == 'td' and len(children) > 2:
@@ -105,6 +106,7 @@ def process_subject_data(term, level, subject, soup):
                 else:
                     subchildren = indiv_class_soup.find_all('td')
                     classes += [{
+                        **course,
                         'classNumber': subchildren[0].text.strip() if len(subchildren) >= 1 else None,
                         'section': subchildren[1].text.strip() if len(subchildren) >= 2 else None,
                         'campusLocation': subchildren[2].text.strip() if len(subchildren) >= 3 else None,
@@ -115,22 +117,17 @@ def process_subject_data(term, level, subject, soup):
                         'instructor': subchildren[12].text.strip() if len(subchildren) >= 13 else None,
                     }]
 
-            course['classes'] = classes
-
         # otherwise, the tr is an undefined row, and we ignore it
         else:
             pass
-    
-    # add last updated time to course
-    course['dateUpdated'] = datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d %H:%M:%S")
 
     # add final course
     if course.get('subjectCode', None) != None:
-        courses += [course]
+        classesList.extend(classes)
 
-    return courses
+    return classesList
 
-def add_subject_to_db(term, level, subject, courses, client):
+def add_subject_to_db(term, level, subject, classesList, client):
     delete_query = {
         'term': term,
         'subjectCode': subject,
@@ -139,7 +136,7 @@ def add_subject_to_db(term, level, subject, courses, client):
     client[os.getenv('DB_NAME')][os.getenv('DB_COLLECTION')].delete_many(delete_query)
 
     # insert new data
-    client[os.getenv('DB_NAME')][os.getenv('DB_COLLECTION')].insert_many(courses)
+    client[os.getenv('DB_NAME')][os.getenv('DB_COLLECTION')].insert_many(classesList)
 
 def get_previous_class_schedule(driver, client, specific_terms=None):
     driver.get(url)
@@ -182,10 +179,10 @@ def get_previous_class_schedule(driver, client, specific_terms=None):
         # do processing on the subject
         class_soup = BeautifulSoup(driver.page_source, "html.parser")
         try:
-            # get courses list
-            courses = process_subject_data(term, level, subject, class_soup)
-            # add courses list to db
-            add_subject_to_db(term, level, subject, courses, client)
+            # get classes list
+            classesList = process_subject_data(term, level, subject, class_soup)
+            # add classesList list to db
+            add_subject_to_db(term, level, subject, classesList, client)
 
             print(f"Added courses for subject {subject} for term {term} for level {'UG' if level == 'under' else 'G'}")
         except:
