@@ -1,12 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import classroomFinderScreen from './src/screens/classroomFinder';
+import Header from './shared/header';
+const Stack = createStackNavigator<RootStackParamList>();
+
+type RootStackParamList = {
+  classroomFinderScreen: undefined;
+};
+
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+       initialRouteName='classroomFinderScreen'
+       screenOptions={{
+        header: () => <Header />
+      }}>
+        <Stack.Screen 
+          name = "classroomFinderScreen"
+          component={classroomFinderScreen}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
