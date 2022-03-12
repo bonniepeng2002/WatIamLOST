@@ -105,7 +105,10 @@ def process_subject_data(term, level, subject, soup):
                     room = subchildren[11].text.strip() if len(subchildren) >= 12 else None
 
                     # room = (building code) (room number)
-                    [buildingCode, roomNumber] = room.split() if room else ["", ""]
+                    try:
+                        [buildingCode, roomNumber] = room.split()
+                    except:
+                        [buildingCode, roomNumber] = ["", ""]
                     # HH:MM-HH:MM(days)[MM/DD-MM/DD]
                     parsedTime = parse_time_string(time)
                     

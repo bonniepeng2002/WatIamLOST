@@ -51,7 +51,7 @@ def get_last_term_code(termcode):
 # HH:MM-HH:MM(days)[MM/DD-MM/DD]
 # assume timeString is not None
 def parse_time_string(timeString):
-    if timeString != None:
+    if timeString != "":
         # get start and end time hours
         startTime = timeString[0:5]
         endTime = timeString[6:11]
@@ -89,6 +89,4 @@ def parse_time_string(timeString):
         }
     else:
         return None
-    
-
 
