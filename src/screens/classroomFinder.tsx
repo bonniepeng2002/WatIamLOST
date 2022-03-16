@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import * as React from 'react'
+import { useState } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import MapView from 'react-native-maps';
 
 
 
-const classroomFinderScreen = () => {
+const ClassroomFinderScreen = () => {
     const [region, setRegion] = useState({
         latitude: 43.4723,
         longitude: -80.5449,
@@ -48,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default classroomFinderScreen;
+export default ClassroomFinderScreen;
