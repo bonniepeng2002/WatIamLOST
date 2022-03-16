@@ -3,7 +3,7 @@ import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import ClassroomFinderScreen from './src/screens/ClassroomFinder';
+import ClassroomFinderScreen from './src/screens/classroomFinder';
 import Header from './shared/header';
 import { Ionicons  } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
