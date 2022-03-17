@@ -1,13 +1,14 @@
-const mongoose = require('mongoose')
+import { model, Schema } from "mongoose"
+import { IClass } from "../types/class";
 
 // schema for time object
-const TimeSchema = new mongoose.Schema({
+const TimeSchema: Schema = new Schema({
     startTime: {
-        type: Date,
+        type: String,
         required: true,
     },
     endTime: {
-        type: Date,
+        type: String,
         required: true,
     },
     days: { // days of the week class is offered
@@ -17,7 +18,7 @@ const TimeSchema = new mongoose.Schema({
 })
 
 // schema for class object
-const ClassSchema = new mongoose.Schema({
+const ClassSchema: Schema = new Schema({
     subjectCode: { // eg MATH
         type: String,
         required: true,
@@ -39,4 +40,5 @@ const ClassSchema = new mongoose.Schema({
         required: true,
     },
 })
-module.exports = mongoose.model('Class', ClassSchema);
+
+export default model<IClass>('Class', ClassSchema);
