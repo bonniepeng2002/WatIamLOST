@@ -77,7 +77,13 @@ def parse_time_string(timeString):
             else:
                 days.append(timeString[i])
                 i+=1
-        # output result
+        # parse startTime and endTime
+
+        # if startTimeHours is < 8, then it is in PM
+        if startTimeHours < 8:
+            startTimeHours += 12
+            endTimeHours += 12
+        # output result - times are in 24h
         return {
             'startTime': {
                 'hours': startTimeHours,
