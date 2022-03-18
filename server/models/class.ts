@@ -1,14 +1,26 @@
 import { model, Schema } from "mongoose"
 import { IClass } from "../types/class";
 
+// schema for hours+mins
+const HMSchema: Schema = new Schema({
+    hours: {
+        type: Number,
+        required: true,
+    },
+    mins: {
+        type: Number,
+        required: true,
+    }
+})
+
 // schema for time object
 const TimeSchema: Schema = new Schema({
     startTime: {
-        type: String,
+        type: HMSchema,
         required: true,
     },
     endTime: {
-        type: String,
+        type: HMSchema,
         required: true,
     },
     days: { // days of the week class is offered
@@ -36,7 +48,7 @@ const ClassSchema: Schema = new Schema({
         required: true,
     },
     roomNumber: { // eg 306
-        type: Number,
+        type: String,
         required: true,
     },
 })
