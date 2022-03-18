@@ -1,12 +1,6 @@
 import os
 
-from datetime import datetime
-from dotenv import load_dotenv
-
-__location__ = os.path.realpath(
-    os.path.join(os.getcwd(), os.path.dirname(__file__)))
-
-load_dotenv()
+from datetime import time
 
 # get current termcode given date (which is a datetime object)
 def get_termcode(date):
@@ -53,8 +47,10 @@ def get_last_term_code(termcode):
 def parse_time_string(timeString):
     if timeString != "":
         # get start and end time hours
-        startTime = timeString[0:5]
-        endTime = timeString[6:11]
+        startTimeHours = int(timeString[0:2])
+        startTimeMins = int(timeString[3:5])
+        endTimeHours = int(timeString[6:8])
+        endTimeMins = int(timeString[9:11])
         # get days of the week
         i = 11
         days = []
@@ -83,10 +79,9 @@ def parse_time_string(timeString):
                 i+=1
         # output result
         return {
-            'startTime': startTime,
-            'endTime': endTime,
+            'startTime': time(startTimeHours, startTimeMins, 0),
+            'endTime': time(endTimeHours, endTimeMins, 0),
             'days': days
         }
     else:
         return None
-
