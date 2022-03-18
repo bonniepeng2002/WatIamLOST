@@ -1,6 +1,6 @@
 import os
 
-from datetime import time
+from datetime import time, datetime
 
 # get current termcode given date (which is a datetime object)
 def get_termcode(date):
@@ -79,8 +79,14 @@ def parse_time_string(timeString):
                 i+=1
         # output result
         return {
-            'startTime': time(startTimeHours, startTimeMins, 0),
-            'endTime': time(endTimeHours, endTimeMins, 0),
+            'startTime': {
+                'hours': startTimeHours,
+                'mins': startTimeMins,
+            },
+            'endTime': {
+                'hours': endTimeHours,
+                'mins': endTimeMins,
+            },
             'days': days
         }
     else:

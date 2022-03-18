@@ -215,6 +215,7 @@ if __name__ == '__main__':
     driver = webdriver.Firefox(executable_path=os.getenv(
         "DRIVER_PATH"), options=firefox_options)
     try:
+        print("Driver up and running")
         get_previous_class_schedule(driver, client)
     finally:
         driver.close()
