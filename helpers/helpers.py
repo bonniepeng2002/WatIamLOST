@@ -83,6 +83,9 @@ def parse_time_string(timeString):
         if startTimeHours < 8:
             startTimeHours += 12
             endTimeHours += 12
+        # if startTimeHours > endTimeHours, times "wrap" around noon
+        if startTimeHours > endTimeHours:
+            endTimeHours += 12
         # output result - times are in 24h
         return {
             'startTime': {
