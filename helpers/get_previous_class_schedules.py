@@ -4,7 +4,7 @@ import mechanize
 import json
 from bs4 import BeautifulSoup
 import requests
-
+from helpers import parse_time_string
 from datetime import datetime, timedelta
 import pytz
 
@@ -23,12 +23,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 from selenium.webdriver.firefox.options import Options
-
-from bs4 import BeautifulSoup
-
-from pymongo import MongoClient
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -105,6 +99,19 @@ def process_subject_data(term, level, subject, soup):
                 # otherwise, the table row is a class, and so we add it to the classes list for the courses
                 else:
                     subchildren = indiv_class_soup.find_all('td')
+
+                    # parse time and room
+                    time = subchildren[10].text.strip() if len(subchildren) >= 11 else None
+                    room = subchildren[11].text.strip() if len(subchildren) >= 12 else None
+
+                    # room = (building code) (room number)
+                    try:
+                        [buildingCode, roomNumber] = room.split()
+                    except:
+                        [buildingCode, roomNumber] = ["", ""]
+                    # HH:MM-HH:MM(days)[MM/DD-MM/DD]
+                    parsedTime = parse_time_string(time)
+                    
                     classes += [{
                         **course,
                         'classNumber': subchildren[0].text.strip() if len(subchildren) >= 1 else None,
@@ -112,8 +119,9 @@ def process_subject_data(term, level, subject, soup):
                         'campusLocation': subchildren[2].text.strip() if len(subchildren) >= 3 else None,
                         'enrolCap': subchildren[6].text.strip() if len(subchildren) >= 7 else None,
                         'enrolTotal': subchildren[7].text.strip() if len(subchildren) >= 8 else None,
-                        'time': subchildren[10].text.strip() if len(subchildren) >= 11 else None,
-                        'room': subchildren[11].text.strip() if len(subchildren) >= 12 else None,
+                        'time': parsedTime,
+                        'buildingCode': buildingCode,
+                        'roomNumber': roomNumber,
                         'instructor': subchildren[12].text.strip() if len(subchildren) >= 13 else None,
                     }]
 
