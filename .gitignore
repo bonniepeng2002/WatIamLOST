@@ -10,5 +10,9 @@ npm-debug.*
 *.orig.*
 web-build/
 
+.env
+geckodriver.log
+__pycache__
+
 # macOS
 .DS_Store
