@@ -1,21 +1,6 @@
 import os
 
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
-
-import requests
-import re
-from pymongo import MongoClient, DESCENDING
-
-from bs4 import BeautifulSoup
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-__location__ = os.path.realpath(
-    os.path.join(os.getcwd(), os.path.dirname(__file__)))
-
-load_dotenv()
+from datetime import time, datetime
 
 # get current termcode given date (which is a datetime object)
 def get_termcode(date):
@@ -55,3 +40,63 @@ def get_last_term_code(termcode):
         return f"{int(termcode[0:3])}1"
     else:
         return f"{int(termcode[0:3]) - 1}9"
+
+# parse time string
+# HH:MM-HH:MM(days)[MM/DD-MM/DD]
+# assume timeString is not None
+def parse_time_string(timeString):
+    if timeString != "":
+        # get start and end time hours
+        startTimeHours = int(timeString[0:2])
+        startTimeMins = int(timeString[3:5])
+        endTimeHours = int(timeString[6:8])
+        endTimeMins = int(timeString[9:11])
+        # get days of the week
+        i = 11
+        days = []
+        while len(timeString) > i and not timeString[i].isnumeric():
+            # tues/thurs
+            if timeString[i] == 'T':
+                # tues: next char is upper
+                if len(timeString) <= i+1 or not timeString[i+1].islower(): 
+                    days.append('T')
+                    i+=1
+                else:
+                    days.append('Th')
+                    i+=2
+            # sat/sun
+            elif timeString[i] == 'S':
+                # sat: next char is upper
+                if len(timeString) <= i+1 or not timeString[i+1].islower(): 
+                    days.append('S')
+                    i+=1
+                else:
+                    days.append('Su')
+                    i+=2
+            # any other days
+            else:
+                days.append(timeString[i])
+                i+=1
+        # parse startTime and endTime
+
+        # if startTimeHours is < 8, then it is in PM
+        if startTimeHours < 8:
+            startTimeHours += 12
+            endTimeHours += 12
+        # if startTimeHours > endTimeHours, times "wrap" around noon
+        if startTimeHours > endTimeHours:
+            endTimeHours += 12
+        # output result - times are in 24h
+        return {
+            'startTime': {
+                'hours': startTimeHours,
+                'mins': startTimeMins,
+            },
+            'endTime': {
+                'hours': endTimeHours,
+                'mins': endTimeMins,
+            },
+            'days': days
+        }
+    else:
+        return None
