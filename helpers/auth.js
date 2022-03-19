@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const User = require('../model/User');
-const {signUpValidation, loginValidation} = require('../auth-validation');
+const {signUpValidation, loginValidation} = require('./auth-validation');
 const jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 const {valid} = require("joi");
