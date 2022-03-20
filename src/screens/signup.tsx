@@ -1,3 +1,4 @@
+import React from "react";
 import { StatusBar } from 'expo-status-bar';
 import {Alert, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useEffect, useState} from "react";

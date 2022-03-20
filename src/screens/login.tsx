@@ -1,8 +1,10 @@
+import React from "react";
 import { StatusBar } from 'expo-status-bar';
 import {Alert, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useState} from "react";
 import { NavigationContainer} from "@react-navigation/native";
 import {createReactNativeMatcher} from "@expo/metro-config/build/transformer/createMatcher";
+
 
 const axios = require('axios');
 
@@ -33,6 +35,7 @@ export default function LoginScreen({ navigation }: {navigation: any}) {
     }).then((response:string) => {
       // console.log(response);
       console.log("successful auth");
+      navigation.push('classroomFinderScreen');
     }).catch((error:any) => {
       loginFailAlert(error);
       if (error.response) {

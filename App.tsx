@@ -48,7 +48,8 @@ function Classroom() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={"Login"} screenOptions={{header: () => <Header />}}>
+      <Stack.Navigator initialRouteName='Login' screenOptions={{ header: () => <Header /> }}>
+        <Stack.Screen name = "classroomFinderScreen" component={Classroom}/>
         <Stack.Screen name={"Login"} component={LoginScreen} options={{title: 'Login', headerShown:false}} />
         <Stack.Screen name={"Signup"} component={SignupScreen} options={{title: 'Signup', headerShown: false}} />
       </Stack.Navigator>
