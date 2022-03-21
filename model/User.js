@@ -20,4 +20,22 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+const studySchema = new mongoose.Schema({
+    hostUser: {
+        type: String,
+        required: true,
+    },
+    building: {
+        type: String,
+        required: true,
+    },
+    room: {
+        type: String,
+        required: true
+    }
+
+
+
+})
+
 module.exports = mongoose.model('User', userSchema);
