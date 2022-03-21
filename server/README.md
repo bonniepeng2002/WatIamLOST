@@ -108,5 +108,21 @@ Gets all the locations of all the campus buildings.
     "longitude": 0
   }
 ]
+
+### /buildings/:buildingCode
+
+**Description**
+
+Gets the location data of a campus building by building code (e.g. MC)
+
+**Parameters**
+
+- `buildingCode`: The code of the building to get classes for.
+
+**Response**
+
+Same as above.
+
+
 ```
 
