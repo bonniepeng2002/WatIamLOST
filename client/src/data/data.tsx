@@ -4,13 +4,13 @@ export const markers = [
             latitude: 43.4721377,
             longitude: -80.5441279
         },
-        title: "MC",
+        buildingCode: "MC",
     },
     {
         coordinate: {
             latitude: 43.4729308,
             longitude: -80.5421266
         },
-        title: "DC",
+        buildingCode: "DC",
     }
 ]
