@@ -9,5 +9,6 @@ router.get("/classes/:buildingCode", classes.getClassesInBuildingCode)
 router.get("/classes/:buildingCode/:roomNumber", classes.getClassesInRoom)
 
 router.get("/buildings", buildings.getBuildings)
+router.get("/buildings/:buildingCode", buildings.getBuildingsFromCode)
 
 export default router;
