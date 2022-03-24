@@ -48,13 +48,16 @@ export const getBuildingsFromCode = async (req: Request, res: Response): Promise
     )
     .then(async (r) => {
       const building: IBuilding = r.data;
+      const day: any = (typeof req.query.day == undefined)
+        ? {
+          "time.days": {$in: [req.query.day]}
+        }
+        : {};
 
       // get list of classes
       const classes: IClass[] = await Class.find({
         buildingCode: req.params.buildingCode,
-        "time.days": {
-          $in: [req.query.day],
-        },
+        ...day,
       })
 
       res
