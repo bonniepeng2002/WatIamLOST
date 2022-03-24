@@ -1,30 +1,82 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Dimensions, TextInput } from "react-native";
-import MapView from "react-native-maps";
+import React, { useState, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  TextInput,
+  Button,
+} from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import axios from "axios";
 
 interface MapProps {}
 
 export const Map: React.FC<MapProps> = ({}) => {
-  const [region, setRegion] = useState({
-    latitude: 43.4723,
-    longitude: -80.5449,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-
+  const mapRef = useRef(null);
   type region = {
     latitude: number;
     longitude: number;
     latitudeDelta: number;
     longitudeDelta: number;
   };
+  type buildingRegion = {
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  };
+
+  const [region, setRegion] = useState({
+    latitude: 43.4723,
+    longitude: -80.5449,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const [buildingRegion, setBuildingRegion] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0,
+    longitudeDelta: 0,
+  });
+
   const onRegionChange = (region: region) => {
     setRegion(region);
   };
 
-  const [value, setValue] = useState("");
+  const [buildingCode, setBuildingCode] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const search = () => {
+    const url = "http://10.38.31.178:3000/buildings/" + buildingCode;
+    setLoading(true);
+    axios.get(url).then(
+      (response) => {
+        const res = response.data;
+
+        setRegion({
+          longitude: res.building.longitude,
+          latitude: res.building.latitude,
+          latitudeDelta: 0.002,
+          longitudeDelta: 0.002,
+        });
+        setBuildingRegion({
+          longitude: res.building.longitude,
+          latitude: res.building.latitude,
+          latitudeDelta: 0.002,
+          longitudeDelta: 0.002,
+        });
+        setLoading(false);
+      },
+      (err) => {
+        setLoading(false);
+        console.log(err);
+      }
+    );
+  };
+
   const onChangeText = (s: string) => {
-    setValue(s);
+    setBuildingCode(s.toUpperCase());
   };
 
   return (
@@ -33,22 +85,33 @@ export const Map: React.FC<MapProps> = ({}) => {
         style={styles.map}
         region={region}
         onRegionChange={onRegionChange}
-      />
+        ref={mapRef}
+      >
+        <Marker coordinate={buildingRegion} />
+      </MapView>
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchText}
-          placeholder={"Search"}
+          placeholder={"Search for a building"}
           placeholderTextColor={"#666"}
-          value={value}
+          value={buildingCode}
           onChangeText={onChangeText}
         />
+        <Button title="search" onPress={() => search()} />
       </View>
+      {loading && (
+        <ActivityIndicator
+          style={styles.loading}
+          size="large"
+          color="#0275d8"
+        />
+      )}
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   map: {
     width: Dimensions.get("window").width,
@@ -65,5 +128,14 @@ const styles = StyleSheet.create({
     height: 45,
     paddingHorizontal: 10,
     fontSize: 18,
+  },
+  loading: {
+    position: "absolute",
+    flexDirection: "row",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    marginTop: 0,
   },
 });
