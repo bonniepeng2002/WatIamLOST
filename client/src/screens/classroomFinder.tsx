@@ -15,7 +15,6 @@ const baseurl = "http://10.0.0.48:3000/classes"
 const ClassroomFinderScreen = () => {
   const _map = React.useRef(null);
   const _scrollView = React.useRef(null);
-  // let buildings = [];
   const [buildings, setBuildings] = useState([]);
   const [current, setCurrent] = useState({buildingCode: "MC", longitude: -80.5441279, latitude: 43.4721377});
   const [schedule, setSchedule] = useState({});
@@ -166,7 +165,6 @@ const styles = StyleSheet.create({
     padding: 10
   },
   card: {
-    // padding: 10,
     elevation: 2,
     backgroundColor: "#FFF",
     borderTopLeftRadius: 5,
@@ -175,7 +173,6 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowRadius: 5,
     shadowOpacity: 0.3,
-    // shadowOffset: { x: 2, y: -2 },
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
     overflow: "hidden",
@@ -194,13 +191,3 @@ const styles = StyleSheet.create({
 });
 
 export default ClassroomFinderScreen;
-
-/*          {schedule.map((clas, index) => {
-            return (
-              <DataTable.Row key={index}>
-                <DataTable.Cell>{clas.classNumber}</DataTable.Cell>
-                {/* <DataTable.Cell>{freetime?[0].startTime.hours}</DataTable.Cell> 
-              /DataTable.Row>
-                
-
-                */
