@@ -24,7 +24,7 @@ function Classroom() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any;
 
-          if (route.name === "Home") {
+          if (route.name === "ClassroomFinder") {
             iconName = "bookmark";
           } else if (route.name === "Settings") {
             iconName = "ios-list";
@@ -39,7 +39,7 @@ function Classroom() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={ClassroomFinderScreen} />
+      <Tab.Screen name="ClassroomFinder" component={ClassroomFinderScreen} />
       <Tab.Screen name="Map" component={Map} />
     </Tab.Navigator>
   );
