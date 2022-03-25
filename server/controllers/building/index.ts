@@ -1,5 +1,9 @@
 import { Response, Request } from "express"
 import { IBuilding } from "../../types/building"
+
+import { IClass } from "../../types/class"
+import Class from "../../models/class"
+
 import axios from 'axios';
 
 const uwapi: string = "https://openapi.data.uwaterloo.ca/v3"
@@ -42,13 +46,26 @@ export const getBuildingsFromCode = async (req: Request, res: Response): Promise
         }
       },
     )
-      .then((r) => {
-        const building: IBuilding = r.data;
-        res
-          .status(200)
-          .json({ building });
+    .then(async (r) => {
+      const building: IBuilding = r.data;
+      const day: any = (typeof req.query.day == undefined)
+        ? {
+          "time.days": {$in: [req.query.day]}
+        }
+        : {};
+
+      // get list of classes
+      const classes: IClass[] = await Class.find({
+        buildingCode: req.params.buildingCode,
+        ...day,
       })
-      .catch(console.error);
+
+      res
+        .status(200)
+        .json({ ...building, classes });
+    })
+    .catch(console.error);
+
   } catch (err) {
     throw err
   }

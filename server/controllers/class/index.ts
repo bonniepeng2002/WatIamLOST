@@ -7,15 +7,17 @@ import Class from "../../models/class"
 // D = M | T | W | Th | F | S | Su
 export const getClassesInBuildingCode = async (req: Request, res: Response): Promise<void> => {
   try {
-
+    const day: any = (typeof req.query.day == undefined)
+      ? {
+        "time.days": {$in: [req.query.day]}
+      }
+      : {};
     // get list of classes
     const classes: IClass[] = await Class.find({
       "buildingCode": req.params.buildingCode,
-      "time.days": {
-        $in: [req.query.day],
-      },
+      ...day,
     })
-
+    
     res
       .status(200)
       .json({ classes });
@@ -30,12 +32,16 @@ export const getClassesInBuildingCode = async (req: Request, res: Response): Pro
 export const getClassesInRoom = async (req: Request, res: Response): Promise<void> => {
   try {
     // get list of classes
+    const day: any = (typeof req.query.day == undefined)
+        ? {
+          "time.days": {$in: [req.query.day]}
+        }
+        : {};
+
     const classes: IClass[] = await Class.find({
       buildingCode: req.params.buildingCode,
       roomNumber: req.params.roomNumber,
-      "time.days": {
-        $in: [req.query.day],
-      },
+      ...day,
     })
 
     res
