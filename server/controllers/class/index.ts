@@ -3,6 +3,8 @@ import { IClass } from "../../types/class"
 import { TimeInterval, StartTime, EndTime } from "../../types/time"
 import Class from "../../models/class"
 
+import { groupBy } from "../../helpers/groupBy"
+
 // Get list of classes in a specific building code
 // /classes/:buildingCode?day=D
 // D = M | T | W | Th | F | S | Su
@@ -139,6 +141,53 @@ export const getListOfTimesRoomIsFree = async (req: Request, res: Response) => {
     const freeTimes: TimeInterval[] = convertTimeIntervalListIntoFreeTimes(times);
 
     res.status(200).json({ freeTimes });
+  }
+  catch (err) {
+    throw err;
+  }
+}
+
+// Get list of time intervals where rooms in a specific building are free
+// /classes/:buildingCode/free?day=D
+export const getListOfTimesBuildingIsFree = async (req: Request, res: Response) => {
+  try {
+    // get list of classes
+    const day: any = (typeof req.query.day != undefined)
+      ? {
+        "time.days": { $in: [req.query.day] }
+      }
+      : {};
+
+    const classes: IClass[] = await Class.find({
+      buildingCode: req.params.buildingCode,
+      ...day,
+    })
+
+    // group classes by room number
+    const groupedClasses: { [roomCode: string]: IClass[] } = groupBy(classes, "roomNumber");
+
+    // initialize result: dictionary of roomCodes to lists of 
+    // time intervals
+    const result: { [roomCode: string]: TimeInterval[] } = {};
+    for (let roomCode in groupedClasses) {
+      let classes: IClass[] = groupedClasses[roomCode];
+      let times: TimeInterval[] = classes.map(c => {
+        return {
+          startTime: {
+            hours: c.time.startTime.hours,
+            mins: c.time.startTime.mins,
+          },
+          endTime: {
+            hours: c.time.endTime.hours,
+            mins: c.time.endTime.mins,
+          }
+        }
+      });
+      let freeTimes: TimeInterval[] = convertTimeIntervalListIntoFreeTimes(times)
+      result[roomCode] = freeTimes;
+    }
+
+    res.status(200).json({ result });
   }
   catch (err) {
     throw err;
