@@ -7,6 +7,7 @@ const router: Router = Router();
 // set up routes
 router.get("/classes/:buildingCode", classes.getClassesInBuildingCode)
 router.get("/classes/:buildingCode/:roomNumber", classes.getClassesInRoom)
+router.get("/classes/:buildingCode/:roomNumber/free", classes.getListOfTimesRoomIsFree)
 
 router.get("/buildings", buildings.getBuildings)
 router.get("/buildings/:buildingCode", buildings.getBuildingsFromCode)

@@ -85,6 +85,42 @@ Gets all classes that occur in a specific room of a building on a certain day of
 
 Same as above.
 
+### /classes/:buildingCode/:roomNumber/free
+
+**Description**
+
+Get all the free time intervals for a specific room of a building on a certain day of the week.
+
+**Parameters**
+
+- `buildingCode`: The code of the building to get classes for.
+- `roomNumber`: The room number of the room in the building to get classes for.
+
+**Query Parameters**
+
+  - `day`: The day of the week to get classes for, which is one of the following: `M | T | W | Th | F | S | Su`.
+
+**Example**
+
+`/classes/MC/4021/free?day=M`
+
+**Response**
+
+```json
+[
+  {
+    "startTime": {
+      "hour": number, 
+      "mins": number,
+    },
+    "endTime": {
+      "hour": number, 
+      "mins": number,
+    },
+  }
+]
+```
+
 ## Buildings
 
 ### /buildings
