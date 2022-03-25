@@ -10,7 +10,7 @@ export const getClassesInBuildingCode = async (req: Request, res: Response): Pro
   try {
     const day: any = (typeof req.query.day != undefined)
       ? {
-        "time.days": {$in: [req.query.day]}
+        "time.days": { $in: [req.query.day] }
       }
       : {};
     // get list of classes
@@ -18,7 +18,7 @@ export const getClassesInBuildingCode = async (req: Request, res: Response): Pro
       "buildingCode": req.params.buildingCode,
       ...day,
     })
-    
+
     res
       .status(200)
       .json({ classes });
@@ -34,10 +34,10 @@ export const getClassesInRoom = async (req: Request, res: Response): Promise<voi
   try {
     // get list of classes
     const day: any = (typeof req.query.day != undefined)
-        ? {
-          "time.days": {$in: [req.query.day]}
-        }
-        : {};
+      ? {
+        "time.days": { $in: [req.query.day] }
+      }
+      : {};
 
     const classes: IClass[] = await Class.find({
       buildingCode: req.params.buildingCode,
@@ -53,23 +53,74 @@ export const getClassesInRoom = async (req: Request, res: Response): Promise<voi
   }
 }
 
+// Convert list of time intervals into "free times"
+const convertTimeIntervalListIntoFreeTimes = (til: TimeInterval[]) => {
+
+  // get when the time intervals are free
+  // sort the time intervals
+  const sortedTimes: TimeInterval[] = til.sort((ti1, ti2) => {
+    return (ti1.startTime.hours - ti2.endTime.hours)
+      || (ti1.startTime.mins - ti2.endTime.mins)
+  })
+
+  // take every adjacent pair of time intervals, and calculate
+  // the "difference" in the time intervals
+  let differences: TimeInterval[] = [];
+  // push start -> first
+  if (sortedTimes.length !== 0) {
+    differences.push({
+      startTime: StartTime,
+      endTime: sortedTimes[0].startTime,
+    })
+  }
+  else {
+    differences.push({
+      startTime: StartTime,
+      endTime: EndTime,
+    })
+  }
+  // push intermediate differences
+  for (let i: number = 0; i < til.length - 1; i++) {
+    let fst: TimeInterval = sortedTimes[i];
+    let snd: TimeInterval = sortedTimes[i + 1];
+    differences.push({
+      startTime: fst.endTime,
+      endTime: snd.startTime,
+    })
+  }
+  // push last -> end
+  if (sortedTimes.length !== 0) {
+    differences.push({
+      startTime: sortedTimes[sortedTimes.length - 1].endTime,
+      endTime: EndTime,
+    })
+  }
+
+  // filter out any differences that are <= 10 minutes long
+  const freeTimes: TimeInterval[] = differences.filter(ti => {
+    return (ti.endTime.hours - ti.startTime.hours) * 60
+      + (ti.endTime.mins - ti.startTime.mins) > 10
+  });
+
+  return freeTimes;
+}
+
 // Get list of time intervals where the class is free
 // /classes/:buildingCode/:roomNumber/free?day=D
 export const getListOfTimesRoomIsFree = async (req: Request, res: Response) => {
   try {
     // get list of classes
     const day: any = (typeof req.query.day != undefined)
-        ? {
-          "time.days": {$in: [req.query.day]}
-        }
-        : {};
+      ? {
+        "time.days": { $in: [req.query.day] }
+      }
+      : {};
 
     const classes: IClass[] = await Class.find({
       buildingCode: req.params.buildingCode,
       roomNumber: req.params.roomNumber,
       ...day,
     })
-    console.log(classes);
 
     // get times
     const times: TimeInterval[] = classes.map(c => {
@@ -85,51 +136,7 @@ export const getListOfTimesRoomIsFree = async (req: Request, res: Response) => {
       }
     });
 
-    // get when the time intervals are free
-    // sort the time intervals
-    const sortedTimes: TimeInterval[] = times.sort((ti1, ti2) => {
-      return (ti1.startTime.hours - ti2.endTime.hours) 
-        || (ti1.startTime.mins - ti2.endTime.mins)
-    })
-
-    // take every adjacent pair of time intervals, and calculate
-    // the "difference" in the time intervals
-    let differences: TimeInterval[] = [];
-    // push start -> first
-    if (sortedTimes.length !== 0) {
-      differences.push({
-        startTime: StartTime,
-        endTime: sortedTimes[0].startTime,
-      })
-    }
-    else {
-      differences.push({
-        startTime: StartTime,
-        endTime: EndTime,
-      })
-    }
-    // push intermediate differences
-    for (let i: number = 0; i < times.length-1; i++) {
-      let fst: TimeInterval = sortedTimes[i];
-      let snd: TimeInterval = sortedTimes[i+1];
-      differences.push({
-        startTime: fst.endTime,
-        endTime: snd.startTime,
-      })
-    }
-    // push last -> end
-    if (sortedTimes.length !== 0) {
-      differences.push({
-        startTime: sortedTimes[sortedTimes.length - 1].endTime,
-        endTime: EndTime,
-      })
-    }
-
-    // filter out any differences that are <= 10 minutes long
-    const freeTimes: TimeInterval[] = differences.filter(ti => {
-      return (ti.endTime.hours - ti.startTime.hours) * 60
-        + (ti.endTime.mins - ti.startTime.mins) > 10
-    });
+    const freeTimes: TimeInterval[] = convertTimeIntervalListIntoFreeTimes(times);
 
     res.status(200).json({ freeTimes });
   }
