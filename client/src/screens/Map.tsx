@@ -55,14 +55,14 @@ export const Map: React.FC<MapProps> = ({}) => {
         const res = response.data;
 
         setRegion({
-          longitude: res.building.longitude,
-          latitude: res.building.latitude,
+          longitude: res.longitude,
+          latitude: res.latitude,
           latitudeDelta: 0.002,
           longitudeDelta: 0.002,
         });
         setBuildingRegion({
-          longitude: res.building.longitude,
-          latitude: res.building.latitude,
+          longitude: res.longitude,
+          latitude: res.latitude,
           latitudeDelta: 0.002,
           longitudeDelta: 0.002,
         });
