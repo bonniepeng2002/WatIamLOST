@@ -4,8 +4,14 @@ export interface IClass extends Document {
   subjectCode: string,
   catalogNumber: string,
   time: {
-    startTime: string,
-    endTime: string,
+    startTime: {
+      hours: number,
+      mins: number,
+    },
+    endTime: {
+      hours: number,
+      mins: number,
+    }
     days: string[],
   },
   buildingCode: string,
