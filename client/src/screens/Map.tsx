@@ -48,7 +48,7 @@ export const Map: React.FC<MapProps> = ({}) => {
   const [loading, setLoading] = useState(false);
 
   const search = () => {
-    const url = "http://10.38.31.178:3000/buildings/" + buildingCode;
+    const url = "http://localhost:3000/buildings/" + buildingCode;
     setLoading(true);
     axios.get(url).then(
       (response) => {
