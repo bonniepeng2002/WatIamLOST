@@ -102,7 +102,7 @@ Get all the free time intervals for a specific room of a building on a certain d
 
 **Example**
 
-`/classes/MC/4021/free?day=M`
+`/classes/:buildingCode/:roomNumber/free?day=M`
 
 **Response**
 
