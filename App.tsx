@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoginScreen from './src/screens/login';
-import SignupScreen from "./src/screens/signup";
+import LoginScreen from './client/src/screens/login';
+import SignupScreen from "./client/src/screens/signup";
 import { StatusBar } from 'expo-status-bar';
 
-import ClassroomFinderScreen from './src/screens/classroomFinder';
-import Header from './shared/header';
+import ClassroomFinderScreen from './client/src/screens/classroomFinder';
+import Header from './client/shared/header';
 import { Ionicons  } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 

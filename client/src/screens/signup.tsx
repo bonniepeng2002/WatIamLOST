@@ -47,7 +47,7 @@ export default function SignupScreen({ navigation }: {navigation: any}) {
         email: uEmail,
         password: pWord
       }
-    }).then((response:string) => {
+    }).then((response:any) => {
       // console.log(response);
       signupPassAlert();
       console.log("successful signup");

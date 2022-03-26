@@ -32,10 +32,15 @@ export default function LoginScreen({ navigation }: {navigation: any}) {
         email: uName,
         password: pWord
       }
-    }).then((response:string) => {
+    }).then((response:any) => {
       // console.log(response);
       console.log("successful auth");
-      navigation.push('classroomFinderScreen');
+      //console.log(response.data);
+      navigation.navigate('classroomFinderScreen',{
+        //screen: "Study Buddy!",
+        params : {userId: response.data},
+      });
+
     }).catch((error:any) => {
       loginFailAlert(error);
       if (error.response) {
