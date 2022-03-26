@@ -1,27 +1,71 @@
 import { Response, Request } from "express"
 import { IBuilding } from "../../types/building"
+
+import { IClass } from "../../types/class"
+import Class from "../../models/class"
+
 import axios from 'axios';
+
+const uwapi: string = "https://openapi.data.uwaterloo.ca/v3"
 
 // Get entire list of buildings
 export const getBuildings = async (req: Request, res: Response): Promise<void> => {
   try {
     // get list of buildings
     axios.get(
-      'https://openapi.data.uwaterloo.ca/v3/Locations',
-      { 
-        headers: 
-        { 
+      `${uwapi}/Locations`,
+      {
+        headers:
+        {
           "X-API-KEY": process.env.WATERLOO_API_KEY ?? ""
-        } 
+        }
       },
     )
-    .then((r) => {
-      const buildings: IBuilding[] = r.data;
+      .then((r) => {
+        const buildings: IBuilding[] = r.data;
+        res
+          .status(200)
+          .json({ buildings });
+      })
+      .catch(console.error);
+  } catch (err) {
+    throw err
+  }
+}
+
+// Get building from building code
+export const getBuildingsFromCode = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // get list of buildings
+    axios.get(
+      `${uwapi}/Locations/${req.params.buildingCode}`,
+      {
+        headers:
+        {
+          "X-API-KEY": process.env.WATERLOO_API_KEY ?? ""
+        }
+      },
+    )
+    .then(async (r) => {
+      const building: IBuilding = r.data;
+      const day: any = (typeof req.query.day != undefined)
+        ? {
+          "time.days": {$in: [req.query.day]}
+        }
+        : {};
+
+      // get list of classes
+      const classes: IClass[] = await Class.find({
+        buildingCode: req.params.buildingCode,
+        ...day,
+      })
+
       res
         .status(200)
-        .json({ buildings });
+        .json({ ...building, classes });
     })
     .catch(console.error);
+
   } catch (err) {
     throw err
   }
