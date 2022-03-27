@@ -35,7 +35,7 @@ function Classroom(props) {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any;
 
-          if (route.name === "Home") {
+          if (route.name === "ClassroomFinder") {
             iconName = "bookmark";
           } else if (route.name === "Settings") {
             iconName = "ios-list";
@@ -52,7 +52,7 @@ function Classroom(props) {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={ClassroomFinderScreen} />
+      <Tab.Screen name="ClassroomFinder" component={ClassroomFinderScreen} />
       <Tab.Screen name="Map" component={Map} />
       <Tab.Screen name="Study Buddy!" component={StudyBuddyScreen} initialParams={props.route.params}/>
 
