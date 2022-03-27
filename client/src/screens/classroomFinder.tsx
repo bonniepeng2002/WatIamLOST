@@ -11,7 +11,7 @@ import { ScrollView, State } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.95;
-const baseurl = "http://10.0.0.48:3000/classes"
+const baseurl = "http://localhost:3000/classes"
 const ClassroomFinderScreen = () => {
   const _map = React.useRef(null);
   const _scrollView = React.useRef(null);
@@ -27,14 +27,14 @@ const ClassroomFinderScreen = () => {
   }
 
   useEffect(() => {
-    axios.get("http://10.0.0.48:3000/buildings")
+    axios.get("http://localhost:3000/buildings")
       .then(response => {
         setBuildings(response.data.buildings);
       })
   },[]) 
 
   useEffect(() => {
-    axios.get("http://10.0.0.48:3000/classes/" + current.buildingCode + "/free?day=" + getToday())
+    axios.get("http://localhost:3000/classes/" + current.buildingCode + "/free?day=" + getToday())
       .then(response => {
         setSchedule(response.data.result);
         setClassroom(Object.keys(response.data.result));

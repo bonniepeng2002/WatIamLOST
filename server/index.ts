@@ -10,7 +10,14 @@ const app: Express = express()
 const PORT: string | number = process.env.PORT || 3000
 
 app.use(cors())
+
+app.use(express.json());
+
 app.use(routes)
+
+
+
+
 
 const uri: string = process.env.CLASSES_URI ?? ""
 

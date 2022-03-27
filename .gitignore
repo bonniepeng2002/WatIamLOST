@@ -11,7 +11,7 @@ npm-debug.*
 web-build/
 .idea
 
-.env
+server/.env
 geckodriver.log
 __pycache__
 

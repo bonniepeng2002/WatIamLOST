@@ -8,6 +8,12 @@ import Header from "./shared/header";
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Map } from "./src/screens/Map";
+import LoginScreen from "./src/screens/login";
+import SignupScreen from "./src/screens/signup";
+import StudyBuddyScreen from "./src/screens/StudyBuddy";
+import * as React from "react";
+import StudyBuddyList from "./src/screens/StudyBuddyList";
+import {useEffect} from "react";
 const Stack = createStackNavigator();
 
 type RootStackParamList = {
@@ -16,7 +22,12 @@ type RootStackParamList = {
 
 const Tab = createBottomTabNavigator();
 
-function Classroom() {
+function Classroom(props) {
+  //const {userId} = userInfo.params;
+
+  // useEffect(() => {
+  //   console.log(JSON.stringify(props.route.params));
+  // })
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -30,6 +41,8 @@ function Classroom() {
             iconName = "ios-list";
           } else if (route.name === "Map") {
             iconName = "map"
+          } else if (route.name == "Study Buddy!") {
+            iconName = "people"
           }
 
           // You can return any component that you like here!
@@ -41,6 +54,10 @@ function Classroom() {
     >
       <Tab.Screen name="ClassroomFinder" component={ClassroomFinderScreen} />
       <Tab.Screen name="Map" component={Map} />
+      <Tab.Screen name="Study Buddy!" component={StudyBuddyScreen} initialParams={props.route.params}/>
+
+
+
     </Tab.Navigator>
   );
 }
@@ -49,12 +66,16 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="classroomFinderScreen"
+        initialRouteName="Login"
         screenOptions={{
           header: () => <Header />,
         }}
       >
         <Stack.Screen name="classroomFinderScreen" component={Classroom} />
+        <Stack.Screen name={"Login"} component={LoginScreen} options={{title: 'Login', headerShown:false}} />
+        <Stack.Screen name={"Signup"} component={SignupScreen} options={{title: 'Signup', headerShown: false}} />
+        <Stack.Screen name={"StudyBuddyList"} component={StudyBuddyList} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
