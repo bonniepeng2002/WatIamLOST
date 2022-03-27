@@ -22,7 +22,7 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
   const [currentBuidling,setCurrentBuilding] = useState("");
   const [currentRoom,setCurrentRoom] = useState("");
   useEffect(() => {
-    console.log(route.params.params.userId);
+    // console.log(route.params.params.userId);
     axios({
       url: "http://localhost:3000/api/user/findUser",
       method: "GET",
@@ -30,7 +30,7 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
         id: route.params.params.userId
       }
     }).then((response:any) => {
-      console.log(response.data.name);
+      // console.log(response.data.name);
       setUserName(response.data.name);
       if (response.data.hasRoom) {
         setCurrentRoom(response.data.roomNumber);
@@ -126,7 +126,7 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
         room: currentRoom
       }
     }).then((response:any) => {
-      console.log("Successfully deleted building from building database")
+      // console.log("Successfully deleted building from building database")
       axios({
         url:  "http://localhost:3000/api/user/removeUserRoom",
         method: "POST",
@@ -134,10 +134,9 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
           id: route.params.params.userId
         }
       }).then((response:any) => {
-        console.log(response);
-        navigation.navigate("classroomFinderScreen",{
-          screen: 'Home'
-        })
+        // console.log(response);
+        // console.log("we should be here");
+        setHasBooking(false);
       }).catch((error:any) => {
         if (error.response) {
           // Request made and server responded
@@ -173,7 +172,7 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
     return (
       <SafeAreaView style={styles.container}>
         {/* <Text>Open up App.tsx to start working on your app!</Text> */}
-        <Text>Buildings</Text>
+        <Text style={styles.titleText}>Buildings</Text>
         <FlatList
           style={styles.list}
           data={dataSource}
@@ -190,7 +189,7 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
   }
   else {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerTrue}>
         {/* <Text>Open up App.tsx to start working on your app!</Text> */}
         <Text>You're hosting a study room at {currentBuidling} {currentRoom}! Click below to end your session :(</Text>
         <TouchableOpacity style={styles.loginBtn} onPress={() => removeSession()}>
@@ -207,6 +206,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     // alignItems: 'center',
+    justifyContent: 'center',
+  },
+  containerTrue: {
+    flex: 1,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   list: {
@@ -227,6 +233,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#ffffff",
+  },
+  titleText: {
+    alignItems: "center",
+    textAlign: "center",
+    fontSize: 24
   },
 
   itemStyle: {

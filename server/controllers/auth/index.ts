@@ -90,14 +90,14 @@ export const authLogin = async (req: Request, res: Response): Promise<any> => {
 
 export const findUser = async (req: Request, res: Response): Promise<any> => {
   User.findById(req.query.id,(error:any,data:any) => {
-    console.log(req.query.id);
+    // console.log(req.query.id);
     if (error) {
       console.log(error);
       res.status(400).send("Can't find user");
     }
     else {
-      console.log(data);
-      console.log("here is your data");
+      // console.log(data);
+      // console.log("here is your data");
       res.send(data);
     }
   })
@@ -105,7 +105,7 @@ export const findUser = async (req: Request, res: Response): Promise<any> => {
 
 export const userHasRoom = async (req: Request, res: Response): Promise<any> => {
   try {
-    console.log(req.query.id);
+    // console.log(req.query.id);
     axios({
       url: "http://localhost:3000/api/user/findUser",
       method: "GET",
@@ -113,7 +113,7 @@ export const userHasRoom = async (req: Request, res: Response): Promise<any> => 
         id: req.query.id
       }
     }).then((response:any) => {
-      console.log(response.data.hasRoom);
+      // console.log(response.data.hasRoom);
       if (response.data.hasRoom) res.send("yes");
       else res.send("no");
     }).catch((error:any) => {

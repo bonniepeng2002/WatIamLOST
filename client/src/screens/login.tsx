@@ -34,7 +34,7 @@ export default function LoginScreen({ navigation }: {navigation: any}) {
       }
     }).then((response:any) => {
       // console.log(response);
-      console.log("successful auth");
+      // console.log("successful auth");
       //console.log(response.data);
       navigation.navigate('classroomFinderScreen',{
         //screen: "Study Buddy!",
