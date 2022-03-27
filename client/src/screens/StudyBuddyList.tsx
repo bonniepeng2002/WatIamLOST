@@ -27,8 +27,8 @@ const StudyBuddyList = ({route, navigation}) => {
   const [userName,setUserName] = useState("");
 
   useEffect(() => {
-    console.log(userId);
-    console.log("st")
+    // console.log(userId);
+    // console.log("st")
     axios({
       url: "http://localhost:3000/api/study/allCurrentSessions",
       method: "GET",
@@ -67,7 +67,7 @@ const StudyBuddyList = ({route, navigation}) => {
         id: userId
       }
     }).then((response:any) => {
-      console.log(response.data.name);
+      // console.log(response.data.name);
       setUserName(response.data.name);
     }).catch((error:any) => {
       console.log("Some internal error getting the name");
@@ -86,7 +86,7 @@ const StudyBuddyList = ({route, navigation}) => {
         room: room
       }
     }).then((response:any) => {
-      console.log("Successful building registration")
+      // console.log("Successful building registration")
       axios({
         url:  "http://localhost:3000/api/user/addUserRoom",
         method: "POST",
@@ -96,9 +96,11 @@ const StudyBuddyList = ({route, navigation}) => {
           roomNum: room,
         }
       }).then((response:any) => {
-        console.log(response);
+        // console.log(response);
+        // console.log("added the new study session in frontend");
         navigation.navigate("classroomFinderScreen",{
-          screen: 'Home'
+          screen: "ClassroomFinder",
+          params: { userId: userId }
         })
       }).catch((error:any) => {
         if (error.response) {
@@ -127,17 +129,17 @@ const StudyBuddyList = ({route, navigation}) => {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
       }
-      // Alert.alert(
-      //   "Booking Failed",
-      //   "That room is already taken!",
-      //   [
-      //     {
-      //       text: "Retry",
-      //       onPress: () => {
-      //       }
-      //     }
-      //   ]
-      // )
+      Alert.alert(
+        "Booking Failed",
+        "That room is already taken!",
+        [
+          {
+            text: "Retry",
+            onPress: () => {
+            }
+          }
+        ]
+      )
     })
   })
 
@@ -185,8 +187,8 @@ const StudyBuddyList = ({route, navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* <Text>Open up App.tsx to start working on your app!</Text> */}
-      <Text>{bName}</Text>
-      <TouchableOpacity onPress={() => {setDialog(true)}}>
+      <Text style={styles.titleText}>{bName}</Text>
+      <TouchableOpacity style={styles.titleText} onPress={() => {setDialog(true)}}>
         <AntDesign name="pluscircle" size={24} color="#037a87" />
       </TouchableOpacity>
       <Dialog.Container visible={dialog}>
@@ -243,6 +245,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 20,
     backgroundColor: "#033f63",
+  },
+  titleText: {
+    alignItems: "center",
+    textAlign: "center",
+    fontSize: 24
   },
 
 

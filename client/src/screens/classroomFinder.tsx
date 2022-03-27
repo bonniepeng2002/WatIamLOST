@@ -22,8 +22,8 @@ const ClassroomFinderScreen = () => {
 
   const getToday = () => {
     let today = new Date();
-    let dates = ["M", "T", "W", "Th", "F", "S", "Su"];
-    return dates[today.getDay() - 1];
+    let dates = ["M", "T", "W", "Th", "F"];
+    return dates[today.getDay() % 5];
   }
 
   useEffect(() => {

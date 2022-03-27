@@ -50,7 +50,7 @@ export default function SignupScreen({ navigation }: {navigation: any}) {
     }).then((response:any) => {
       // console.log(response);
       signupPassAlert();
-      console.log("successful signup");
+      // console.log("successful signup");
     }).catch((error:any) => {
       singupFailAlert(error);
       if (error.response) {
