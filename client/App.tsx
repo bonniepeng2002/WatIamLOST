@@ -24,10 +24,10 @@ const Tab = createBottomTabNavigator();
 
 function Classroom(props) {
   //const {userId} = userInfo.params;
-  const temp = props.route.params.userId
-  useEffect(() => {
-    console.log(JSON.stringify(props.route.params));
-  })
+
+  // useEffect(() => {
+  //   console.log(JSON.stringify(props.route.params));
+  // })
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

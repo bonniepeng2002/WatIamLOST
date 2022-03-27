@@ -19,7 +19,20 @@ const userSchema: Schema = new Schema({
         required: true,
         // max: 1024,
 
+    },
+    hasRoom: {
+        type: Boolean,
+        required: false
+    },
+    building: {
+        type: String,
+        required: false
+    },
+    roomNumber: {
+        type: String,
+        required: false
     }
+
 })
 
 //module.exports = mongoose.model('User', userSchema);

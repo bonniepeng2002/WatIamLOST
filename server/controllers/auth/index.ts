@@ -4,12 +4,14 @@ import argon2 from "argon2";
 import Joi from "joi";
 import * as jwt from "jsonwebtoken"
 import 'dotenv/config'
+import axios from "axios";
 
 const signUpValidation = (data:any) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().required().email(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
+
   });
   //validate user entry
   return schema.validate(data);
@@ -42,7 +44,10 @@ export const authSignup = async (req: Request, res: Response): Promise<any> => {
   const user = new User({
     name: req.body.name,
     email: req.body.email,
-    password: passwordHash
+    password: passwordHash,
+    hasRoom: false,
+    building: "",
+    roomNumber: ""
   });
   //console.log("hello");
   try {
@@ -84,16 +89,66 @@ export const authLogin = async (req: Request, res: Response): Promise<any> => {
 }
 
 export const findUser = async (req: Request, res: Response): Promise<any> => {
-  User.findById(req.body.id,(error:any,data:any) => {
-    console.log(req.body.id);
+  User.findById(req.query.id,(error:any,data:any) => {
+    console.log(req.query.id);
     if (error) {
       console.log(error);
       res.status(400).send("Can't find user");
     }
     else {
       console.log(data);
+      console.log("here is your data");
       res.send(data);
     }
   })
+}
 
+export const userHasRoom = async (req: Request, res: Response): Promise<any> => {
+  try {
+    console.log(req.query.id);
+    axios({
+      url: "http://localhost:3000/api/user/findUser",
+      method: "GET",
+      params: {
+        id: req.query.id
+      }
+    }).then((response:any) => {
+      console.log(response.data.hasRoom);
+      if (response.data.hasRoom) res.send("yes");
+      else res.send("no");
+    }).catch((error:any) => {
+      console.log("Some internal error");
+      res.status(400).send(error);
+    })
+  }
+  catch (err) {
+    console.log(err);
+    res.status(400).send("Can't find user details")
+  }
+}
+
+export const addUserRoom = async (req: Request, res: Response): Promise<any> => {
+  User.findById(req.body.id,function(err:any,doc:any) {
+    if (err) {
+      res.status(400).send(err);
+    }
+    doc.hasRoom = true;
+    doc.building = req.body.building;
+    doc.roomNumber = req.body.roomNum;
+    doc.save();
+    res.send("success!!!!!");
+  })
+}
+
+export const removeUserRoom = async (req: Request, res: Response): Promise<any> => {
+  User.findById(req.body.id,function(err:any,doc:any) {
+    if (err) {
+      res.status(400).send(err);
+    }
+    doc.hasRoom = false;
+    doc.building = "";
+    doc.roomNumber = "";
+    doc.save();
+    res.send("success!!!!!");
+  })
 }

@@ -45,7 +45,7 @@ export default function SignupScreen({ navigation }: {navigation: any}) {
       data: {
         name: uName,
         email: uEmail,
-        password: pWord
+        password: pWord,
       }
     }).then((response:any) => {
       // console.log(response);

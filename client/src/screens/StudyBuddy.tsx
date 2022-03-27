@@ -18,10 +18,33 @@ import axios from "axios";
 
 const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) => {
   let listViewRef;
+  const [userName,setUserName] = useState("");
+  const [currentBuidling,setCurrentBuilding] = useState("");
+  const [currentRoom,setCurrentRoom] = useState("");
   useEffect(() => {
     console.log(route.params.params.userId);
+    axios({
+      url: "http://localhost:3000/api/user/findUser",
+      method: "GET",
+      params: {
+        id: route.params.params.userId
+      }
+    }).then((response:any) => {
+      console.log(response.data.name);
+      setUserName(response.data.name);
+      if (response.data.hasRoom) {
+        setCurrentRoom(response.data.roomNumber);
+        setCurrentBuilding(response.data.building);
+        setHasBooking(true);
+      }
+      else {
+        setHasBooking(false);
+      }
+    }).catch((error:any) => {
+      console.log("Some internal error getting the name");
+    })
   })
-  //const {userId} = userInfo;
+  const [hasBooking, setHasBooking] = useState(false);
   const [isPress, setIsPress] = React.useState(false);
   const [dataSource, setDataSource] = useState([
     { id: 1, title: 'EXP' },
@@ -80,7 +103,9 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
   const getItem = (item) => {
     // Function for click on an item
     navigation.navigate("StudyBuddyList",{
-      bName: item.title.toUpperCase()
+      bName: item.title.toUpperCase(),
+      userId : route.params.params.userId,
+      userName : route.params.params.name
     });
   };
 
@@ -92,25 +117,89 @@ const StudyBuddyScreen = ({ route, navigation }: {route:any, navigation: any}) =
     onShowUnderlay: () => setIsPress(true)
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* <Text>Open up App.tsx to start working on your app!</Text> */}
-      <Text>Buildings</Text>
-      <FlatList
-        style={styles.list}
-        data={dataSource}
-        keyExtractor={(item,index) => index.toString()}
-        ItemSeparatorComponent={ItemSeparatorView}
-        renderItem={ItemView}
-        ref={(ref) => {
-          listViewRef = ref;
-        }}
-      />
+  const removeSession = (() => {
+    axios({
+      url: "http://localhost:3000/api/study/removeStudySession",
+      method: "POST",
+      data: {
+        building: currentBuidling,
+        room: currentRoom
+      }
+    }).then((response:any) => {
+      console.log("Successfully deleted building from building database")
+      axios({
+        url:  "http://localhost:3000/api/user/removeUserRoom",
+        method: "POST",
+        data: {
+          id: route.params.params.userId
+        }
+      }).then((response:any) => {
+        console.log(response);
+        navigation.navigate("classroomFinderScreen",{
+          screen: 'Home'
+        })
+      }).catch((error:any) => {
+        if (error.response) {
+          // Request made and server responded
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+      })
+    }).catch((error:any) => {
+      if (error.response) {
+        // Request made and server responded
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+    })
+  })
 
 
+  if (!hasBooking) {
+    return (
+      <SafeAreaView style={styles.container}>
+        {/* <Text>Open up App.tsx to start working on your app!</Text> */}
+        <Text>Buildings</Text>
+        <FlatList
+          style={styles.list}
+          data={dataSource}
+          keyExtractor={(item, index) => index.toString()}
+          ItemSeparatorComponent={ItemSeparatorView}
+          renderItem={ItemView}
+          ref={(ref) => {
+            listViewRef = ref;
+          }}
+        />
+      </SafeAreaView>
 
-    </SafeAreaView>
-  );
+    );
+  }
+  else {
+    return (
+      <SafeAreaView style={styles.container}>
+        {/* <Text>Open up App.tsx to start working on your app!</Text> */}
+        <Text>You're hosting a study room at {currentBuidling} {currentRoom}! Click below to end your session :(</Text>
+        <TouchableOpacity style={styles.loginBtn} onPress={() => removeSession()}>
+          <Text style={styles.buttonText}>End session</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+
+  }
 }
 
 const styles = StyleSheet.create({
@@ -136,7 +225,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "#033f63",
   },
-
+  buttonText: {
+    color: "#ffffff",
+  },
 
   itemStyle: {
     padding: 25,

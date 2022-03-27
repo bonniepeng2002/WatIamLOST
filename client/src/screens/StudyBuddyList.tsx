@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react';
 import Dialog from 'react-native-dialog';
 import {
+  Alert,
   Dimensions,
   FlatList,
   SafeAreaView,
@@ -20,12 +21,14 @@ import axios from "axios";
 
 const StudyBuddyList = ({route, navigation}) => {
   let listViewRef;
-  const {bName} = route.params;
+  const {bName, userId} = route.params;
   const [isPress, setIsPress] = React.useState(false);
   const [roomNumber, setRoomNumber] = useState("");
+  const [userName,setUserName] = useState("");
 
   useEffect(() => {
-    //console.log(route);
+    console.log(userId);
+    console.log("st")
     axios({
       url: "http://localhost:3000/api/study/allCurrentSessions",
       method: "GET",
@@ -54,7 +57,22 @@ const StudyBuddyList = ({route, navigation}) => {
         console.log('Error', error.message);
       }
 
+
     })
+
+    axios({
+      url: "http://localhost:3000/api/user/findUser",
+      method: "GET",
+      params: {
+        id: userId
+      }
+    }).then((response:any) => {
+      console.log(response.data.name);
+      setUserName(response.data.name);
+    }).catch((error:any) => {
+      console.log("Some internal error getting the name");
+    })
+
 
   }, [])
 
@@ -63,12 +81,39 @@ const StudyBuddyList = ({route, navigation}) => {
       url: "http://localhost:3000/api/study/addStudySession",
       method: "POST",
       data: {
-        name: "Sat Arora",
+        name: userName,
         building: bName,
         room: room
       }
     }).then((response:any) => {
       console.log("Successful building registration")
+      axios({
+        url:  "http://localhost:3000/api/user/addUserRoom",
+        method: "POST",
+        data: {
+          id: userId,
+          building: bName,
+          roomNum: room,
+        }
+      }).then((response:any) => {
+        console.log(response);
+        navigation.navigate("classroomFinderScreen",{
+          screen: 'Home'
+        })
+      }).catch((error:any) => {
+        if (error.response) {
+          // Request made and server responded
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+      })
     }).catch((error:any) => {
       if (error.response) {
         // Request made and server responded
@@ -82,6 +127,17 @@ const StudyBuddyList = ({route, navigation}) => {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
       }
+      // Alert.alert(
+      //   "Booking Failed",
+      //   "That room is already taken!",
+      //   [
+      //     {
+      //       text: "Retry",
+      //       onPress: () => {
+      //       }
+      //     }
+      //   ]
+      // )
     })
   })
 
